@@ -3,5 +3,27 @@
   %head
     %title Backbone Hangman
     = stylesheet_link_tag "css/hangman.css"
+    = javascript_include_tag  "javascript/jquery.js",
+                              "javascript/underscore.js", 
+                              "javascript/backbone.js",
+                              "javascript/models/game.js",
+                              "javascript/views/optionsView.js",
+                              "javascript/views/charactersView.js",
+                              "javascript/hangman.js"
   %body
-    welcome to backbone hangman. This is a demonstration of Backbone.js
+    
+    #stage
+      
+      #west
+        #options
+          %input{:type => :button, :class => :action_button, :value => "New game", :id => :new_game}
+          
+        #pole
+        
+      #east
+        #word
+          _ _ _ _ _
+        
+        #characters
+          - ('A'..'Z').each do |l|
+            %span.action_button.character{:char => l.downcase}= l
