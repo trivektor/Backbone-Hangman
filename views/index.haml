@@ -6,9 +6,11 @@
     = javascript_include_tag  "javascript/jquery.js",
                               "javascript/underscore.js", 
                               "javascript/backbone.js",
+                              "javascript/handlebars.js",
                               "javascript/models/game.js",
                               "javascript/views/optionsView.js",
                               "javascript/views/charactersView.js",
+                              "javascript/views/wordView.js",
                               "javascript/hangman.js"
   %body
     
@@ -22,8 +24,9 @@
         
       #east
         #word
-          _ _ _ _ _
         
         #characters
           - ('A'..'Z').each do |l|
-            %span.action_button.character{:char => l.downcase}= l
+            %span.action_button.character{:char => l}= l
+            
+    = erb :templates

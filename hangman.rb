@@ -6,6 +6,24 @@ require 'json'
 set :root, File.dirname(__FILE__)
 set :public_folder, File.dirname(__FILE__) + '/public'
 
+class Word
+  
+  def self.masquerade(word)
+    disguise = []
+    word.each_char do |char|
+      disguise << (char == " " ? " " : "&nbsp;")
+    end
+    disguise
+  end
+  
+end
+
+class Game
+  
+  
+  
+end
+
 #class HangMan < Sinatra::Base
   
   #register Sinatra::StaticAssets
@@ -17,10 +35,12 @@ set :public_folder, File.dirname(__FILE__) + '/public'
   post "/new" do
     content = File.read("countries.txt")
     countries = content.split("\n")
-    country = countries[rand(countries.size)]
-    session[:country] = country
+    country = countries[rand(countries.size)].upcase
+    session[:word] = country
+    session[:chars_left] = country.size
+    session[:incorrect_guesses] = 0
     
-    {:spaces => country.size, :country => country}.to_json
+    {:country => country, :word => Word.masquerade(country)}.to_json
   end
   
   post "/check" do

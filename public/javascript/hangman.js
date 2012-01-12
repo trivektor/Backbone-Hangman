@@ -6,4 +6,6 @@ $(function() {
   
   var characters_view = new CharactersView({model: game})
   
+  var word_view = new WordView({model: game})
+  
 })

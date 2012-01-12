@@ -57,6 +57,18 @@ body {
     font-size: 60px;
     font-weight: bold;
     text-align: center; }
+    #east #word .placeholder {
+      display: inline-block;
+      padding: 3px;
+      font-size: 30px;
+      border-bottom: 4px solid #111;
+      width: 35px;
+      height: 22px;
+      line-height: 22px; }
+    #east #word .spacer {
+      display: inline-block;
+      width: 20px;
+      height: 1px; }
   #east #characters span {
     display: inline-block;
     font-size: 20px;

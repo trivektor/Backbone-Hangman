@@ -8,7 +8,7 @@ $(function() {
         url: "/new",
         type: "POST",
         success: function(response) {
-          
+          _this.trigger("gameStartedEvent", response);
         }
       })
     },
