@@ -12,6 +12,7 @@ $(function() {
       this.template = Handlebars.compile(template_source);
     },
     render: function(response) {
+      $("#hint").show();
       var html = this.template({characters: response.word});
       this.el.hide();
       this.el.html(html).show();
