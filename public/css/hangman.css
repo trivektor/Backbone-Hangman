@@ -4,7 +4,7 @@
 
 body {
   background: #eee;
-  font-family: Inika, Arial;
+  font-family: Arial;
   font-size: 15px;
   color: #444; }
 
@@ -18,14 +18,13 @@ body {
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
   font-family: inherit;
   font-weight: bold;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
   border-radius: 5px;
   background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
   background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), to(rgba(0, 0, 0, 0.2)));
   background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
   box-shadow: 0 1px 0 0 #9BD3FF inset;
-  height: 30px; }
+  height: 30px;
+  line-height: 30px; }
   .action_button:hover {
     background-color: #0a90d5;
     color: #fff;
@@ -54,7 +53,7 @@ body {
   #east #word {
     background: #fff;
     margin-bottom: 30px;
-    font-size: 50px;
+    font-size: 35px;
     font-weight: bold;
     text-align: center;
     box-shadow: 0 3px 7px -4px #aaaaaa;
@@ -63,13 +62,14 @@ body {
     color: #999; }
     #east #word .placeholder {
       display: inline-block;
-      border-bottom: 6px solid #999;
+      border-bottom: 5px solid #999;
       width: 43px; }
     #east #word .spacer {
       display: inline-block;
       width: 20px;
       height: 1px; }
   #east #characters {
+    display: none;
     background: #fff;
     padding: 16px;
     border-radius: 10px;

@@ -3,10 +3,14 @@ $(function() {
   window.CharactersView = Backbone.View.extend({
     el: $("#characters"),
     initialize: function() {
+      this.model.bind("gameStartedEvent", this.render, this);
       this.model.bind("guessCheckedEvent", this.removeCharacter, this);
     },
     events: {
       'click .character': 'charClicked'
+    },
+    render: function() {
+      this.el.show();
     },
     charClicked: function(event) {
       var target = $(event.target);
