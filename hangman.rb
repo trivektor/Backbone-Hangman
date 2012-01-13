@@ -66,8 +66,9 @@ post "/check" do
   word = session[:word]
   chars = word.each_char.to_a
   char_clicked = params[:char_clicked]
+  correct_guess = word.include?(char_clicked)
   
-  if word.include?(char_clicked)
+  if correct_guess
     revealed_word = session[:revealed_word]
     revealed_word.each_index do |i|
       if revealed_word[i] == "&nbsp;"
@@ -80,5 +81,5 @@ post "/check" do
   else
     session[:incorrect_guesses] += 1
   end
-  {:country => word, :word => session[:revealed_word]}.to_json
+  {:country => word, :word => session[:revealed_word], :correct_guess => correct_guess}.to_json
 end
