@@ -12,14 +12,12 @@ $(function() {
       this.template = Handlebars.compile(template_source);
     },
     render: function(response) {
-      var r = $.parseJSON(response);
-      var html = this.template({characters: r.word});
+      var html = this.template({characters: response.word});
       this.el.hide();
       this.el.html(html).show();
     },
     displayGuessResult: function(response) {
-      var r = $.parseJSON(response);
-      var html = this.template({characters: r.word});
+      var html = this.template({characters: response.word});
       this.el.html(html);
     }
   })

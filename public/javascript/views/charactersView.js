@@ -13,15 +13,18 @@ $(function() {
       this.el.show();
     },
     charClicked: function(event) {
+      if (this.model.get("lost")) {
+        alert("You've lost");
+        return;
+      }
+      
       var target = $(event.target);
       this.model.unset("target")
       this.model.set({char_clicked: target.attr("char"), target: target});
       this.model.check();
     },
-    removeCharacter: function(response) {
-      var r = JSON.parse(response);
-      
-      if (r.correct_guess) this.model.get("target").remove();
+    removeCharacter: function(response) {      
+      if (response.correct_guess) this.model.get("target").remove();
     }
   })
   
