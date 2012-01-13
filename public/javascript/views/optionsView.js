@@ -17,7 +17,7 @@ $(function() {
       $("#show_answer").remove();
     },
     showGetAnswerButton: function(response) {
-      if (response.incorrect_guesses >= 7) {
+      if (response.incorrect_guesses == this.model.get("threshold")) {
         this.el.append('<input type="button" id="show_answer" class="action_button" value="Show answer" />');
       }
     },

@@ -7,7 +7,11 @@ $(function() {
       this.model.bind("answerFetchedEvent", this.render, this);
     },
     render: function(response) {
-      this.el.html(response.answer).show();
+      if (response.success == 1) {
+        this.el.html("Answer: " + response.answer).show();
+      } else {
+        alert(response.message);
+      }
     },
     hide: function() {
       this.el.hide();

@@ -13,10 +13,7 @@ $(function() {
       this.el.show();
     },
     charClicked: function(event) {
-      if (this.model.get("lost")) {
-        alert("You've lost");
-        return;
-      }
+      if (this.model.get("lost")) return;
       
       var target = $(event.target);
       this.model.unset("target")

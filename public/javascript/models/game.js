@@ -2,7 +2,11 @@ $(function() {
   
   window.Game = Backbone.Model.extend({
     initialize: function() {
-      this.set({lost: false});
+      this.set({
+        win: false, 
+        lost: false, 
+        threshold: 6
+      });
     },
     new: function() {
       var _this = this;
@@ -30,7 +34,8 @@ $(function() {
         success: function(response) {
           var json = $.parseJSON(response);
           
-          if (json.incorrect_guesses >= 7) _this.set({lost: true});
+          if (json.incorrect_guesses > _this.get("threshold")) _this.set({lost: true});
+          if (json.win) _this.set({win: true});
           _this.trigger("guessCheckedEvent", json);
         }
       })

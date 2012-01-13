@@ -84,5 +84,9 @@ post "/check" do
 end
 
 post "/answer" do
-  {:answer => session[:word]}.to_json
+  if (session[:incorrect_guesses] < 6 and session[:chars_left] > 0)
+    {:success => -1, :message => "You haven't finished the game yet"}.to_json
+  else
+    {:success => 1, :answer => session[:word]}.to_json
+  end
 end
