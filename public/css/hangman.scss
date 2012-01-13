@@ -1,14 +1,16 @@
 * { margin:0; padding:0 }
 
 body {
-  font-family:Arial;
+  background:#eee;
+  font-family:Inika, Arial;
   font-size:15px;
   color:#444;
 }
 
 .action_button {
-  background:#0C8DFF; padding:5px 13px; border:1px solid #f67b0e; border:1px solid rgba(0,0,0,.4); color:#fff; cursor:pointer; text-shadow:1px 1px 0 rgba(0,0,0,.3); font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight:bold; line-height:1.6em;
+  background:#0C8DFF; padding:5px 13px; border:1px solid #f67b0e; border:1px solid rgba(0,0,0,.4); color:#fff; cursor:pointer; text-shadow:1px 1px 0 rgba(0,0,0,.3); 
+  font-family:inherit;
+  font-weight:bold;
   -webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;
   background-image: -moz-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,.2));
   background-image: -webkit-gradient(linear, left top,left bottom, from(rgba(0,0,0,0)), to(rgba(0,0,0,.2)));
@@ -41,20 +43,20 @@ body {
   }
   
   #word {
-    width:100%;
+    background:#fff;
     margin-bottom:30px;
-    font-size:60px;
+    font-size:50px;
     font-weight:bold;
     text-align:center;
+    box-shadow:0 3px 7px -4px #aaa;
+    padding:16px;
+    border-radius:10px;
+    color:#999;
     
     .placeholder {
       display:inline-block;
-      padding:3px;
-      font-size:30px;
-      border-bottom:4px solid #111;
-      width:35px;
-      height:22px;
-      line-height:22px;
+      border-bottom:6px solid #999;
+      width:43px;
     }
     
     .spacer {
@@ -65,6 +67,10 @@ body {
   }
   
   #characters {
+    background:#fff;
+    padding:16px;
+    border-radius:10px;
+    box-shadow:0 3px 7px -4px #aaa;
     span {
       display:inline-block;
       font-size:20px;
@@ -72,7 +78,7 @@ body {
       color:#fff;
       width:16px;
       text-align:center;
-      margin:0 10px 10px 0;
+      margin:-1px -1px 4px 0;
     }
   }
 }
