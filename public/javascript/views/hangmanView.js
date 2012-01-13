@@ -3,19 +3,16 @@ $(function() {
   window.HangmanView = Backbone.View.extend({
     el: $("#pole"),
     initialize: function() {
-      this.compileTemplates();
+      this.setupSelectors();
       this.model.bind("guessCheckedEvent", this.drawHangman, this);
     },
-    compileTemplates: function() {
-      var head = $("#head_template").html();
-      this.head_template = Handlebars.compile(head);
-      
-      var body = $("#body_template").html();
-      this.body_template = Handlebars.compile(body);
+    setupSelectors: function() {
+      this.body_parts = [$("#head"), $("#body"), $("#right_hand"), $("#left_hand"), $("#right_leg"), $("#left_leg")];
     },
     drawHangman: function(response) {
-      this.el.append($(this.head_template({})));
-      this.el.append($(this.body_template({})));
+      var r = $.parseJSON(response);
+      
+      if (r.incorrect_guesses) this.body_parts[parseInt(r.incorrect_guesses)-1].css("visibility", "visible");
     }
   })
   
