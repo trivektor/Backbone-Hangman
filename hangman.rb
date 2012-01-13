@@ -11,30 +11,26 @@ enable :sessions
 class Word
   
   class << self
-    def masquerade(word)
-      disguise = []
-      word.each_char do |char|
-        disguise << (char == " " ? " " : "&nbsp;")
-      end
-      disguise
-    end
-
     def get_random
       content = File.read("countries.txt")
       words = content.split("\n")
       words[rand(words.size)].upcase
     end
     
-    def reveal(word, char, last_revealed_word)
-      reveal = last_revealed_word
-      word.each_char do |c|
-        reveal << (c == char ? char : "&nbsp;")
-      end
-      reveal
+    def masquerade(word)
+      word.each_char.inject([]) { |disguise, char| disguise << (char == " " ? " " : "&nbsp;"); disguise }
     end
     
-    def get_answer
+    def reveal(last_revealed_word, char_clicked, final_word)
+      chars = final_word.each_char.to_a
       
+      last_revealed_word.each_index do |i|
+        last_revealed_word[i] = chars[i] if last_revealed_word[i] == "&nbsp;" and chars[i] == char_clicked
+      end
+    end
+    
+    def chars_left(revealed_word)
+      revealed_word.count { |c| c == "&nbsp;" }
     end
     
   end
@@ -43,10 +39,13 @@ end
 
 class Game
   
-  class << self
-    def check(word, char)
-      characters = word.each_char.to_a
-      characters.include?(char)
+  class << self    
+    def win?(chars_left, incorrect_guesses)
+      chars_left == 0 and incorrect_guesses < 7
+    end
+    
+    def correct_guess?(char_clicked, final_word)
+      final_word.include?(char_clicked)
     end
   end
   
@@ -62,31 +61,26 @@ post "/new" do
   
   session[:word] = word
   session[:incorrect_guesses] = 0
+  session[:chars_left] = word.size
   session[:revealed_word] = masquerade_word
   
-  {:country => word, :word => masquerade_word}.to_json
+  {:word => masquerade_word}.to_json
 end
 
 post "/check" do
-  word = session[:word]
-  chars = word.each_char.to_a
+  final_word = session[:word]
   char_clicked = params[:char_clicked]
-  correct_guess = word.include?(char_clicked)
+  correct_guess = Game.correct_guess?(char_clicked, final_word)
   
   if correct_guess
-    revealed_word = session[:revealed_word]
-    revealed_word.each_index do |i|
-      if revealed_word[i] == "&nbsp;"
-        if chars[i] == char_clicked
-          revealed_word[i] = chars[i]
-        end
-      end
-    end
-    session[:revealed_word] = revealed_word
+    session[:revealed_word] = Word.reveal(session[:revealed_word], char_clicked, final_word)
+    session[:chars_left] = Word.chars_left(session[:revealed_word])
   else
     session[:incorrect_guesses] += 1
   end
-  {:country => word, :word => session[:revealed_word], :correct_guess => correct_guess, :incorrect_guesses => session[:incorrect_guesses]}.to_json
+  win = Game.win?(session[:chars_left], session[:incorrect_guesses])
+  
+  {:word => session[:revealed_word], :correct_guess => correct_guess, :incorrect_guesses => session[:incorrect_guesses], :win => win}.to_json
 end
 
 post "/answer" do
