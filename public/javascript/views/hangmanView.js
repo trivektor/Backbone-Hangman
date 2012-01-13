@@ -1,7 +1,7 @@
 $(function() {
   
   window.HangmanView = Backbone.View.extend({
-    el: $("#pole"),
+    el: $("#ground"),
     initialize: function() {
       this.setupSelectors();
       this.model.bind("gameStartedEvent", this.clearHangman, this);

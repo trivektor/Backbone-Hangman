@@ -44,6 +44,60 @@ body {
   width: 40%; }
   #west #options {
     margin-bottom: 20px; }
+  #west #ground {
+    position: relative; }
+  #west #pole {
+    border-left: 9px solid #111;
+    border-top: 9px solid #111;
+    width: 200px;
+    height: 370px;
+    margin-top: 100px;
+    margin-left: 100px; }
+  #west #pole_drop {
+    position: absolute;
+    top: 9px;
+    left: 300px;
+    height: 30px;
+    width: 9px;
+    background: #111; }
+  #west #head {
+    border: 9px solid #111;
+    border-radius: 20px;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    left: 285px;
+    top: 30px;
+    visibility: hidden; }
+  #west #body, #west #right_hand, #west #left_hand, #west #right_leg, #west #left_leg {
+    visibility: hidden;
+    width: 9px;
+    background: #111;
+    position: absolute; }
+  #west #body {
+    height: 130px;
+    top: 60px;
+    left: 300px; }
+  #west #right_hand {
+    height: 70px;
+    top: 80px;
+    left: 312px;
+    -moz-transform: rotate(-20deg); }
+  #west #left_hand {
+    height: 70px;
+    top: 80px;
+    left: 288px;
+    -moz-transform: rotate(20deg); }
+  #west #right_leg {
+    height: 90px;
+    top: 185px;
+    left: 315px;
+    -moz-transform: rotate(-20deg); }
+  #west #left_leg {
+    height: 90px;
+    top: 185px;
+    left: 285px;
+    -moz-transform: rotate(20deg); }
 
 #east {
   float: right;
