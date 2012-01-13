@@ -32,6 +32,11 @@ class Word
       end
       reveal
     end
+    
+    def get_answer
+      
+    end
+    
   end
   
 end
@@ -82,4 +87,8 @@ post "/check" do
     session[:incorrect_guesses] += 1
   end
   {:country => word, :word => session[:revealed_word], :correct_guess => correct_guess, :incorrect_guesses => session[:incorrect_guesses]}.to_json
+end
+
+post "/answer" do
+  {:answer => session[:word]}.to_json
 end

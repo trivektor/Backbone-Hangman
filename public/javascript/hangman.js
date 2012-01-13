@@ -10,4 +10,6 @@ $(function() {
   
   var hangman_view = new HangmanView({model: game})
   
+  var answer_view = new AnswerView({model: game})
+  
 })

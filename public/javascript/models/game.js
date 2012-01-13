@@ -13,6 +13,7 @@ $(function() {
         success: function(response) {
           var json = $.parseJSON(response);
           
+          _this.set({lost: false});
           _this.trigger("gameStartedEvent", json);
         }
       })
@@ -31,6 +32,21 @@ $(function() {
           
           if (json.incorrect_guesses >= 7) _this.set({lost: true});
           _this.trigger("guessCheckedEvent", json);
+        }
+      })
+    },
+    get_answer: function() {
+      var _this = this;
+      
+      if (!_this.get("lost")) return;
+      
+      $.ajax({
+        url: "/answer",
+        type: "POST",
+        success: function(response) {
+          var json = $.parseJSON(response);
+          
+          _this.trigger("answerFetchedEvent", json);
         }
       })
     }

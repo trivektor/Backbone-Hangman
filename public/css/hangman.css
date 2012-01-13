@@ -42,6 +42,8 @@ body {
 #west {
   float: left;
   width: 40%; }
+  #west #options {
+    margin-bottom: 20px; }
 
 #east {
   float: right;
@@ -85,7 +87,8 @@ body {
     background: #fff;
     padding: 16px;
     border-radius: 10px;
-    box-shadow: 0 3px 7px -4px #aaaaaa; }
+    box-shadow: 0 3px 7px -4px #aaaaaa;
+    margin-bottom: 30px; }
     #east #characters span {
       display: inline-block;
       font-size: 20px;
@@ -94,3 +97,12 @@ body {
       width: 21px;
       text-align: center;
       margin: -1px -1px 4px 0; }
+  #east #answer {
+    display: none;
+    padding: 16px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 7px -4px #aaaaaa;
+    color: #999;
+    font-size: 15px;
+    font-weight: bold; }

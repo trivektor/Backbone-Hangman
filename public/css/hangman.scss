@@ -35,6 +35,10 @@ body {
 #west {
   float:left;
   width:40%;
+  
+  #options {
+    margin-bottom:20px;
+  }
 }
 
 #east {
@@ -90,6 +94,7 @@ body {
     padding:16px;
     border-radius:10px;
     box-shadow:0 3px 7px -4px #aaa;
+    margin-bottom:30px;
     span {
       display:inline-block;
       font-size:20px;
@@ -99,5 +104,16 @@ body {
       text-align:center;
       margin:-1px -1px 4px 0;
     }
+  }
+  
+  #answer {
+    display:none;
+    padding:16px;
+    background:#fff;
+    border-radius:10px;
+    box-shadow:0 3px 7px -4px #aaa;
+    color:#999;
+    font-size:15px;
+    font-weight:bold;
   }
 }
