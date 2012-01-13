@@ -19,7 +19,6 @@ $(function() {
       this.model.check();
     },
     removeCharacter: function(response) {
-      console.log("removing character if applicable")
       var r = JSON.parse(response);
       
       if (r.correct_guess) this.model.get("target").remove();

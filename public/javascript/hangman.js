@@ -8,4 +8,6 @@ $(function() {
   
   var word_view = new WordView({model: game})
   
+  var hangman_view = new HangmanView({model: game})
+  
 })
