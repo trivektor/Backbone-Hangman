@@ -4,8 +4,10 @@
   {{/each}}
 </script>
 
-<script id="answer_template" type="text/x-handlebars">
-  <input type="button" id="get_answer" value="Show answer" />
+<script id="character_template" type="text/x-handlebars">
+  {{#each characters}}
+    <span class="action_button character" char="{{this}}">{{this}}</span>
+  {{/each}}
 </script>
 
 <script id="head_template" type="text/x-handlebars">
