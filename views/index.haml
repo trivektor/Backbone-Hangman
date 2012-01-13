@@ -2,7 +2,7 @@
 %html
   %head
     %title Backbone Hangman
-    = stylesheet_link_tag "css/hangman.css"
+    = stylesheet_link_tag     "css/hangman.css"
     = javascript_include_tag  "javascript/jquery.js",
                               "javascript/underscore.js", 
                               "javascript/backbone.js",
@@ -15,18 +15,8 @@
   %body
     
     #stage
-      
-      #west
-        #options
-          %input{:type => :button, :class => :action_button, :value => "New game", :id => :new_game}
-          
-        #pole
+      = haml :west
+      = haml :east
         
-      #east
-        #word
-        
-        #characters
-          - ('A'..'Z').each do |l|
-            %span.action_button.character{:char => l}= l
             
     = erb :templates

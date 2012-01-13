@@ -1591,9 +1591,9 @@ Handlebars.template = Handlebars.VM.template;
 
 Handlebars.registerHelper('displayCharacter', function() {
   //console.log(item)
-  if (this == "&nbsp;") {
-    return new Handlebars.SafeString('<span class="placeholder"></span>');
-  } else {
+  if (this == " ") {
     return new Handlebars.SafeString('<span class="spacer"></span>');
+  } else {
+    return new Handlebars.SafeString('<span class="placeholder">' + this + '</span>');
   }
 })

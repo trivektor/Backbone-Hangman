@@ -6,45 +6,79 @@ require 'json'
 set :root, File.dirname(__FILE__)
 set :public_folder, File.dirname(__FILE__) + '/public'
 
+enable :sessions
+
 class Word
   
-  def self.masquerade(word)
-    disguise = []
-    word.each_char do |char|
-      disguise << (char == " " ? " " : "&nbsp;")
+  class << self
+    def masquerade(word)
+      disguise = []
+      word.each_char do |char|
+        disguise << (char == " " ? " " : "&nbsp;")
+      end
+      disguise
     end
-    disguise
+
+    def get_random
+      content = File.read("countries.txt")
+      words = content.split("\n")
+      words[rand(words.size)].upcase
+    end
+    
+    def reveal(word, char, last_revealed_word)
+      reveal = last_revealed_word
+      word.each_char do |c|
+        reveal << (c == char ? char : "&nbsp;")
+      end
+      reveal
+    end
   end
   
 end
 
 class Game
   
-  
+  class << self
+    def check(word, char)
+      characters = word.each_char.to_a
+      characters.include?(char)
+    end
+  end
   
 end
 
-#class HangMan < Sinatra::Base
+get "/" do
+  haml :index
+end
+
+post "/new" do
+  word = Word.get_random
+  masquerade_word = Word.masquerade(word)
   
-  #register Sinatra::StaticAssets
+  session[:word] = word
+  session[:incorrect_guesses] = 0
+  session[:revealed_word] = masquerade_word
   
-  get "/" do
-    haml :index
+  {:country => word, :word => masquerade_word}.to_json
+end
+
+post "/check" do
+  word = session[:word]
+  chars = word.each_char.to_a
+  char_clicked = params[:char_clicked]
+  
+  if word.include?(char_clicked)
+    revealed_word = session[:revealed_word]
+    revealed_word.each_index do |i|
+      if revealed_word[i] == "&nbsp;"
+        if chars[i] == char_clicked
+          revealed_word[i] = chars[i]
+        end
+      end
+    end
+    session[:revealed_word] = revealed_word
+  else
+    session[:incorrect_guesses] += 1
   end
-  
-  post "/new" do
-    content = File.read("countries.txt")
-    countries = content.split("\n")
-    country = countries[rand(countries.size)].upcase
-    session[:word] = country
-    session[:chars_left] = country.size
-    session[:incorrect_guesses] = 0
-    
-    {:country => country, :word => Word.masquerade(country)}.to_json
-  end
-  
-  post "/check" do
-    {:success => 1}.to_json
-  end
-  
-#end
+  {:country => word, :word => session[:revealed_word]}.to_json
+end

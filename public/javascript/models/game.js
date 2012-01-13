@@ -20,7 +20,7 @@ $(function() {
         type: "POST",
         data: {char_clicked: this.get("char_clicked")},
         success: function(response) {
-          
+          _this.trigger("guessCheckedEvent", response);
         }
       })
     }
