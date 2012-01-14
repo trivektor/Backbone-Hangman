@@ -3,9 +3,6 @@ require 'sinatra/static_assets'
 require 'haml'
 require 'json'
 
-set :root, File.dirname(__FILE__)
-set :public_folder, File.dirname(__FILE__) + '/public'
-
 enable :sessions
 
 class Word
