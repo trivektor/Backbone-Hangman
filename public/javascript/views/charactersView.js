@@ -7,7 +7,7 @@ $(function() {
       this.character_template = Handlebars.compile(character_template)
       
       this.model.bind("gameStartedEvent", this.render, this);
-      this.model.bind("guessCheckedEvent", this.removeCharacter, this);
+      this.model.bind("guessCheckedEvent", this.disableCharacter, this);
     },
     events: {
       'click .character': 'charClicked'
@@ -24,8 +24,8 @@ $(function() {
       this.model.set({char_clicked: target.attr("char"), target: target});
       this.model.check();
     },
-    removeCharacter: function(response) {      
-      if (response.correct_guess) this.model.get("target").remove();
+    disableCharacter: function(response) {      
+      if (response.correct_guess) this.model.get("target").removeClass("character").addClass("disabled");
     }
   })
   
