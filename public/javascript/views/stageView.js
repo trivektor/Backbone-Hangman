@@ -6,8 +6,8 @@ $(function() {
       this.model.bind("guessCheckedEvent", this.showGameResult, this);
     },
     showGameResult: function(response) {
-      if (response.incorrect_guesses == this.model.get("threshold")) alert("Sorry! You've lost");
-      if (response.win) alert("Congratulations! You've won");
+      if (response.incorrect_guesses == this.model.get("threshold")) alert(i18n.lose_message);
+      if (response.win) alert(i18n.win_message);
     }
   })
   

@@ -41,7 +41,7 @@ class Game
   
   class << self    
     def win?(chars_left, incorrect_guesses)
-      chars_left == 0 and incorrect_guesses < 7
+      chars_left == 0 and incorrect_guesses < 6
     end
     
     def correct_guess?(char_clicked, final_word)
