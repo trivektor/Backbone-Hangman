@@ -4,7 +4,8 @@ require 'json'
 
 set :root, File.dirname(__FILE__)
 
-enable :sessions
+#enable :sessions
+use Rack::Session::Pool, :expire_after => 2592000
 
 class Word
   
