@@ -3,6 +3,8 @@ require 'sinatra/static_assets'
 require 'haml'
 require 'json'
 
+set :root, File.dirname(__FILE__)
+
 enable :sessions
 
 class Word
@@ -48,42 +50,48 @@ class Game
   
 end
 
-get "/" do
-  haml :index
-end
+class Hangman < Sinatra::Base
+  
+  register Sinatra::StaticAssets
 
-post "/new" do
-  word = Word.get_random
-  masquerade_word = Word.masquerade(word)
-  
-  session[:word] = word
-  session[:incorrect_guesses] = 0
-  session[:chars_left] = word.size
-  session[:revealed_word] = masquerade_word
-  
-  {:word => masquerade_word}.to_json
-end
-
-post "/check" do
-  final_word = session[:word]
-  char_clicked = params[:char_clicked]
-  correct_guess = Game.correct_guess?(char_clicked, final_word)
-  
-  if correct_guess
-    session[:revealed_word] = Word.reveal(session[:revealed_word], char_clicked, final_word)
-    session[:chars_left] = Word.chars_left(session[:revealed_word])
-  else
-    session[:incorrect_guesses] += 1
+  get '/' do
+    haml :index
   end
-  win = Game.win?(session[:chars_left], session[:incorrect_guesses])
-  
-  {:word => session[:revealed_word], :correct_guess => correct_guess, :incorrect_guesses => session[:incorrect_guesses], :win => win}.to_json
-end
 
-post "/answer" do
-  if (session[:incorrect_guesses] < 6 and session[:chars_left] > 0)
-    {:success => -1, :message => "You haven't finished the game yet"}.to_json
-  else
-    {:success => 1, :answer => session[:word]}.to_json
+  post "/new" do
+    word = Word.get_random
+    masquerade_word = Word.masquerade(word)
+  
+    session[:word] = word
+    session[:incorrect_guesses] = 0
+    session[:chars_left] = word.size
+    session[:revealed_word] = masquerade_word
+  
+    {:word => masquerade_word}.to_json
   end
+
+  post "/check" do
+    final_word = session[:word]
+    char_clicked = params[:char_clicked]
+    correct_guess = Game.correct_guess?(char_clicked, final_word)
+  
+    if correct_guess
+      session[:revealed_word] = Word.reveal(session[:revealed_word], char_clicked, final_word)
+      session[:chars_left] = Word.chars_left(session[:revealed_word])
+    else
+      session[:incorrect_guesses] += 1
+    end
+    win = Game.win?(session[:chars_left], session[:incorrect_guesses])
+  
+    {:word => session[:revealed_word], :correct_guess => correct_guess, :incorrect_guesses => session[:incorrect_guesses], :win => win}.to_json
+  end
+
+  post "/answer" do
+    if (session[:incorrect_guesses] < 6 and session[:chars_left] > 0)
+      {:success => -1, :message => "You haven't finished the game yet"}.to_json
+    else
+      {:success => 1, :answer => session[:word]}.to_json
+    end
+  end
+  
 end
