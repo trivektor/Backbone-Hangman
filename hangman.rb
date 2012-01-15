@@ -2,6 +2,8 @@ require 'sinatra'
 require 'haml'
 require 'json'
 
+set :root, File.dirname(__FILE__)
+
 enable :sessions
 
 class Word
