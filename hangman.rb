@@ -1,5 +1,4 @@
 require 'sinatra'
-require 'sinatra/static_assets'
 require 'haml'
 require 'json'
 
