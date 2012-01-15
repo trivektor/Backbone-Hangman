@@ -1,16 +1,16 @@
 INTRODUCTION
-===============
+---------------
 
 This is an application to demonstrate the good things that Backbone JS has to offer such as Model-View structure, event binding, subscriber/observer pattern, seperation of concern etc...
 
 HOW TO USE
-===============
+---------------
 
 * Clone from Github git@github.com:trivektor/Backbone-Hangman.git
 * Install the Sinatra gem (bundle install)
 * Run ruby -rubygems hangman.rb
 
 FEEDBACK
-===============
+---------------
 
 Comments and suggestions are welcome and can be addressed to trivektor [at] gmail.com
