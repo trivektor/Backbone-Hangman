@@ -34,8 +34,9 @@ $(function() {
         success: function(response) {
           var json = $.parseJSON(response);
           
-          if (json.incorrect_guesses > _this.get("threshold")) _this.set({lost: true});
+          if (json.incorrect_guesses >= _this.get("threshold")) _this.set({lost: true});
           if (json.win) _this.set({win: true});
+          
           _this.trigger("guessCheckedEvent", json);
         }
       })
