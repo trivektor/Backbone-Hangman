@@ -5,8 +5,6 @@ require 'json'
 
 set :root, File.dirname(__FILE__)
 
-enable :sessions
-
 class Word
   
   class << self
@@ -53,6 +51,7 @@ end
 class Hangman < Sinatra::Base
   
   register Sinatra::StaticAssets
+  enable :sessions
 
   get '/' do
     haml :index
