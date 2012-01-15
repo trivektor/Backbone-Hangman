@@ -6,7 +6,7 @@ html {
 
 body {
   background:#404040;
-  font-family:Arial;
+  font-family:Montserrat, Arial;
   font-size:12px;
   color:#fff;
   height:100%;
@@ -19,7 +19,6 @@ body {
   border:1px solid rgba(0,0,0,.4); color:#fff; cursor:pointer; 
   text-shadow:1px 1px 0 rgba(0,0,0,.3); 
   font-family:inherit;
-  font-weight:bold;
   border-radius:5px;
   background-image: -moz-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,.2));
   background-image: -webkit-gradient(linear, left top,left bottom, from(rgba(0,0,0,0)), to(rgba(0,0,0,.2)));
@@ -35,28 +34,6 @@ body {
 
 #stage {
   overflow:hidden;
-}
-
-#footer {
-  background:#fff;
-  border-top:1px solid #333;
-  position:absolute;
-  bottom:0;
-  left:0;
-  right:0;
-  padding:10px;
-  overflow:hidden;
-  
-  #options {
-    float:left;
-  }
-  
-  #info {
-    color:#444;
-    float:right;
-    font-size:20px;
-    letter-spacing:-1px;
-  }
 }
 
 #west {
@@ -182,5 +159,34 @@ body {
     font-size:15px;
     font-weight:bold;
     margin-top:30px;
+  }
+}
+
+#footer {
+  background:#fff;
+  border-top:1px solid #333;
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  padding:10px;
+  overflow:hidden;
+  line-height:30px;
+  
+  a {
+    color:#f98d00;
+    text-decoration:none;
+    outline-style:none;
+  }
+  
+  #options {
+    float:left;
+  }
+  
+  #info {
+    color:#444;
+    float:right;
+    font-size:18px;
+    letter-spacing:-1px;
   }
 }
