@@ -37,6 +37,11 @@ body {
     position: relative;
     top: 1px; }
 
+#forkme {
+  position: absolute;
+  top: 0;
+  right: 0; }
+
 #stage {
   overflow: hidden; }
 
@@ -84,7 +89,7 @@ body {
 #east {
   position: absolute;
   left: 400px;
-  right: 100px;
+  right: 200px;
   top: 20px; }
   #east #hint {
     display: none;
@@ -113,7 +118,6 @@ body {
       display: inline-block;
       cursor: pointer;
       font-size: 16px;
-      font-weight: bold;
       border-radius: 3px;
       color: #fff;
       width: 21px;

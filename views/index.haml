@@ -4,7 +4,7 @@
     %title Backbone Hangman
     %meta{:name => "description", :content => "A simple application that demonstrates usage of Backbone JS"}
     %meta{:name => "author", :content => "Tri Vuong"}
-    = stylesheet_link_tag     "http://fonts.googleapis.com/css?family=Qwigley",
+    = stylesheet_link_tag     "http://fonts.googleapis.com/css?family=Montserrat",
                               "css/hangman.css"
     = javascript_include_tag  "javascript/jquery.js",
                               "javascript/underscore.js", 
@@ -19,6 +19,8 @@
                               "javascript/views/stageView.js",
                               "javascript/hangman.js"
   %body
+    
+    = haml :forkme
     
     #stage
       = haml :west
