@@ -1,11 +1,13 @@
 $(function() {
   
   window.Game = Backbone.Model.extend({
+    defaults: {
+      threshold: 6
+    },
     initialize: function() {
       this.set({
         win: false, 
-        lost: false, 
-        threshold: 6
+        lost: false
       });
     },
     new: function() {
