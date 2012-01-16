@@ -1,0 +1,425 @@
+Backbone JS is an emerging Javascript framework that helps developers develop Javascript, front-end heavy applications. The framework is lightweight (~12 kb), actively maintained and developed, and allows the use of good design patterns such as the Observer/Subscriber pattern, dependency injection etc. In this tutorial, I will walk you through re-creating the classic Hangman game and show you how we can divide responsibilities and tasks among the model and views as well as how they communicate with each other. The source of the application is <a href="https://github.com/trivektor/Backbone-Hangman">here</a> and the demo is <a href="http://backbone-hangman.heroku.com">here</a>.
+
+Let's start by listing all the things we need to do and then break them up into small steps.
+
+<strong>Server side</strong>
+
+<ul>
+	<li>First, we need a to be able to generate a random word</li>
+	<li>We need to be able to decide whether user's guesses are correct/incorrect and keeps track of them</li>
+	<li>After each guess, we want to determine whether the user has won/lost the game. If they lost, the game should give the user the answer</li>
+</ul>
+
+<strong>Client side</strong>
+
+<ul>
+	<li>We need to be able to start a new game</li>
+	<li>The game should take user's guess (i.e. which character was clicked) and passes it to the backend for processing</li>
+  <li>Based on response from the server, display the revealed word, disable the clicked character, and draw the hangman if applicable</li>
+</ul>
+
+<strong>1. Hangman's backend</strong>
+
+Since this is a very simple game, we would use Sinatra for all backend processing. The documentation of Sinatra can be found <a title="here" href="http://www.sinatrarb.com/documentation">here</a>. We'd need a Word class that generates a random word from a flat file, masquerades it, reveals parts of the word after each correct guess etc. This is how the Word class looks like.
+
+[sourcecode language="ruby"]
+class Word
+
+  class << self
+    def get_random
+      content = File.read("countries.txt")
+      words = content.split("\n")
+      words[rand(words.size)].upcase
+    end
+
+    def masquerade(word)
+      word.each_char.inject([]) { |disguise, char| disguise << (char == " " ? " " : " "); disguise }
+    end
+
+    def reveal(last_revealed_word, char_clicked, final_word)
+      chars = final_word.each_char.to_a
+
+      last_revealed_word.each_index do |i|
+        last_revealed_word[i] = chars[i] if last_revealed_word[i] == " " and chars[i] == char_clicked
+      end
+    end
+
+    def chars_left(revealed_word)
+      revealed_word.count { |c| c == " " }
+    end
+
+  end
+
+end
+[/sourcecode]
+
+We also need a Game class that determines whether a guess is correct/incorrect and whether the user has won/lost the game.
+
+[sourcecode language="ruby"]
+class Game
+  
+  class << self    
+    def win?(chars_left, incorrect_guesses)
+      chars_left == 0 and incorrect_guesses < 6
+    end
+    
+    def correct_guess?(char_clicked, final_word)
+      final_word.include?(char_clicked)
+    end
+  end
+  
+end
+[/sourcecode]
+
+And finally, the endpoints for which the front end communicates with the backend.
+
+[sourcecode language="ruby"]
+# Index page, pretty straightforward
+get "/" do
+   haml :index
+end
+
+# Create a new game
+post "/new" do
+   word = Word.get_random
+   masquerade_word = Word.masquerade(word)
+   session[:word] = word
+   session[:incorrect_guesses] = 0
+   session[:chars_left] = word.size
+   session[:revealed_word] = masquerade_word
+   {:word => masquerade_word}.to_json
+end
+
+# Determine whether a guess is correct/incorrect
+post "/check" do
+  final_word = session[:word]
+  char_clicked = params[:char_clicked]
+  correct_guess = Game.correct_guess?(char_clicked, final_word)
+
+  if correct_guess
+    session[:revealed_word] = Word.reveal(session[:revealed_word], char_clicked, final_word)
+    session[:chars_left] = Word.chars_left(session[:revealed_word])
+  else
+    session[:incorrect_guesses] += 1
+  end
+  win = Game.win?(session[:chars_left], session[:incorrect_guesses])
+
+  {:word => session[:revealed_word], :correct_guess => correct_guess, :incorrect_guesses => session[:incorrect_guesses], :win => win}.to_json
+end
+
+# Disclose the answer to user once the game is finished
+post "/answer" do
+  if (session[:incorrect_guesses] < 6 and session[:chars_left] > 0)
+    {:success => -1, :message => "You haven't finished the game yet"}.to_json
+  else
+    {:success => 1, :answer => session[:word]}.to_json
+  end
+end
+[/sourcecode]
+
+<strong>2. Hangman's  front end</strong>
+
+As mentioned earlier, we need a mechanism to interact with the backend to post information and get response from. In the world of Backbone JS, this can be achieved using a model. Therefore, we will create a Game model to handle that. In addition, we need:
+
+<ul>
+<li>An 'optionsView' that lets player start a new game or get the answer</li>
+<li>A 'wordView' that shows the initial masked word and reveal the characters accordingly after each correct guess</li>
+<li>A 'charactersView' that displays all the characters (A to Z)</li>
+<li>A 'hangmanView' that draws the Hangman after each incorrect guess</li>
+<li>An 'answerView' that shows the answer once the game is finished</li>
+<li>A 'stageView' that displays the game result</li>
+</ul>
+
+These views subscribe to the Game model's events and will act accordingly.
+
+<strong>i) First, the Game model</strong>
+
+[sourcecode language="javascript"]
+$(function() {
+  
+  window.Game = Backbone.Model.extend({
+    initialize: function() {
+      this.set({
+        win: false, 
+        lost: false, 
+        threshold: 6
+      });
+    },
+    new: function() {
+      var _this = this;
+      
+      $.ajax({
+        url: "/new",
+        type: "POST",
+        success: function(response) {
+          var json = $.parseJSON(response);
+          
+          _this.set({lost: false});
+          _this.trigger("gameStartedEvent", json);
+        }
+      })
+    },
+    check: function() {
+      var _this = this;
+      
+      if (_this.get("lost")) return;
+      
+      $.ajax({
+        url: "/check",
+        type: "POST",
+        data: {char_clicked: this.get("char_clicked")},
+        success: function(response) {
+          var json = $.parseJSON(response);
+          
+          if (json.incorrect_guesses >= _this.get("threshold")) _this.set({lost: true});
+          if (json.win) _this.set({win: true});
+          
+          _this.trigger("guessCheckedEvent", json);
+        }
+      })
+    },
+    get_answer: function() {
+      var _this = this;
+      
+      if (!_this.get("lost")) return;
+      
+      $.ajax({
+        url: "/answer",
+        type: "POST",
+        success: function(response) {
+          var json = $.parseJSON(response);
+          
+          _this.trigger("answerFetchedEvent", json);
+        }
+      })
+    }
+  })
+  
+})
+[/sourcecode]
+
+The model is pretty straightforward, it has 3 attributes 'win', 'lose', and 'threshold' which is the maximum number of incorrect guesses. When the game is initialized, the player neither wins nor loses so 'win' and 'lost' are both set to false.
+
+When a new game is started, the model will post a request to the server and on the success callback, triggers the "gameStartedEvent" so that the views can catch and handle accordingly. The same logic takes place when checking the guess as well as getting the answer.
+
+Now that we have the Game model that can trigger events, let's see how the views handle them.
+
+<strong>ii) The 'optionsView'</strong>
+
+This view contains a 'New game' button and will delegate the action of creating a new game to the model. I always like to bind my views to an existing element on the page instead of creating them on the fly, so my 'el' here is a DOM element which already exists on the page. Upon being initialized, this view sets up 2 listeners for the 'gameStarted', and 'guessCheckedEvent' which specify the actions that will happen when these events are triggered.
+
+[sourcecode language="javascript"]
+$(function() {
+  
+  window.OptionsView = Backbone.View.extend({
+    el: $("#options"),
+    initialize: function() {
+      this.model.bind("gameStartedEvent", this.removeGetAnswerButton, this);
+      this.model.bind("guessCheckedEvent", this.showGetAnswerButton, this);
+    },
+    events: {
+      'click #new_game': 'startNewGame',
+      'click #show_answer': 'showAnswer'
+    },
+    startNewGame: function() {
+      this.model.new();
+    },
+    removeGetAnswerButton: function() {
+      $("#show_answer").remove();
+    },
+    showGetAnswerButton: function(response) {
+      if (response.incorrect_guesses == this.model.get("threshold")) {
+        this.el.append('<input type="button" id="show_answer" class="action_button" value="Show answer" />');
+      }
+    },
+    showAnswer: function() {
+      this.model.get_answer();
+    }
+  })
+  
+})
+[/sourcecode]
+
+<strong>iii) The 'wordView'</strong>
+
+This view uses a Handlebars template to display the initial word (with empty spaces to be filled) as well as the revealed word after each correct guess. I also register a Handlebars helper called 'displayCharacter' which you will find <a href="https://github.com/trivektor/Backbone-Hangman/blob/master/public/javascript/handlebars.js">here</a> (at the very end)
+
+[sourcecode language="javascript"]
+$(function() {
+  
+  window.WordView = Backbone.View.extend({
+    el: $("#word"),
+    initialize: function() {
+      this.compileTemplates();
+      this.model.bind("gameStartedEvent", this.render, this);
+      this.model.bind("guessCheckedEvent", this.displayGuessResult, this);
+    },
+    compileTemplates: function() {
+      var template_source = $("#word_template").html();
+      this.template = Handlebars.compile(template_source);
+    },
+    render: function(response) {
+      $("#hint").show();
+      var html = this.template({characters: response.word});
+      this.el.hide();
+      this.el.html(html).show();
+    },
+    displayGuessResult: function(response) {
+      var html = this.template({characters: response.word});
+      this.el.html(html);
+    }
+  })
+  
+})
+[/sourcecode]
+
+<strong>iv) The 'charactersView'</strong>
+
+This view displays the A-Z characters and handles player's click events. In other words, when a player clicks on a character, the view delegates the check action to the model. Once the model has posted to the server and notified the view the result of the check, the view will then disable the clicked character depending on whether that was the right move or not.
+
+[sourcecode language="javascript"]
+$(function() {
+  
+  window.CharactersView = Backbone.View.extend({
+    el: $("#characters"),
+    initialize: function() {
+      this.compileTemplates();
+      this.model.bind("gameStartedEvent", this.render, this);
+      this.model.bind("guessCheckedEvent", this.disableCharacter, this);
+    },
+    events: {
+      'click .character': 'charClicked'
+    },
+    compileTemplates: function() {
+      var character_template = $("#character_template").html();
+      this.character_template = Handlebars.compile(character_template)
+    },
+    render: function() {
+      var chars = this.character_template({characters: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'G', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z', 'W', '&']})
+      this.el.html(chars).show();
+    },
+    charClicked: function(event) {
+      if (this.model.get("lost")) return;
+      
+      var target = $(event.target);
+      this.model.unset("target")
+      this.model.set({char_clicked: target.attr("char"), target: target});
+      this.model.check();
+    },
+    disableCharacter: function(response) {      
+      if (response.correct_guess) this.model.get("target").removeClass("character").addClass("disabled");
+    }
+  })
+  
+})
+[/sourcecode]
+
+<strong>v) The 'hangmanView'</strong>
+
+Pretty straightforward, I hope. This view draws the hangman progressively after each incorrect guess (by turning the body parts from hidden to visible)
+
+[sourcecode language="javascript"]
+$(function() {
+  
+  window.HangmanView = Backbone.View.extend({
+    el: $("#ground"),
+    initialize: function() {
+      this.setupSelectors();
+      this.model.bind("gameStartedEvent", this.clearHangman, this);
+      this.model.bind("guessCheckedEvent", this.drawHangman, this);
+    },
+    setupSelectors: function() {
+      this.body_parts = [$("#head"), $("#body"), $("#right_arm"), $("#left_arm"), $("#right_leg"), $("#left_leg")];
+    },
+    drawHangman: function(response) {
+      if (!response.correct_guess) this.body_parts[parseInt(response.incorrect_guesses)-1].css("visibility", "visible");
+    },
+    clearHangman: function() {
+      $("#string").css("visibility", "visible")
+      
+      _.each(this.body_parts, function(part) {
+        part.css("visibility", "hidden");
+      })
+    }
+  })
+  
+})
+[/sourcecode]
+
+<strong>vi) The 'answerView'</strong>
+
+Displays the correct answer once the game is finished, and hides it once a new game is started.
+
+[sourcecode language="javascript"]
+$(function() {
+  
+  window.AnswerView = Backbone.View.extend({
+    el: $("#answer"),
+    initialize: function() {
+      this.model.bind("gameStartedEvent", this.hide, this);
+      this.model.bind("answerFetchedEvent", this.render, this);
+    },
+    render: function(response) {
+      if (response.success == 1) {
+        this.el.html("Answer: " + response.answer).show();
+      } else {
+        alert(response.message);
+      }
+    },
+    hide: function() {
+      this.el.hide();
+    }
+  })
+  
+})
+[/sourcecode]
+
+<strong>vii) The 'stageView'</strong>
+
+Displays the game result. You might wonder whether we really need this view. Why can't we just display the game results in one of the other views? The reason being I didn't want to pollute the other views with responsibility that doesn't really belong to them. That's why I wanted to have this view to handle the result as well as other top level functionalities that the game might introduce in the future.
+
+[sourcecode language="javascript"]
+$(function() {
+  
+  window.StageView = Backbone.View.extend({
+    el: $("#stage"),
+    initialize: function() {
+      this.model.bind("guessCheckedEvent", this.showGameResult, this);
+    },
+    showGameResult: function(response) {
+      if (response.incorrect_guesses == this.model.get("threshold")) alert(i18n.lose_message);
+      if (response.win) alert(i18n.win_message);
+    }
+  })
+  
+})
+[/sourcecode]
+
+Lastly, we need to bring everything to life. By that, I mean initializing the views, inject them with the Game model and off you go. The model will interact with the server every time a DOM event (such as click) happens, gets back the response, generates events. Since the views are listening to the Game model's events, they will know what to do and will act accordingly. Here is one of the great things I like about Backbone. It allows you to inject dependencies to your view at runtime. An explanation to what dependency injection is and its benefits can be found <a href="http://www.kevinwilliampang.com/2009/11/07/dependency-injection-for-dummies/">here</a>.
+
+[sourcecode language="javascript"]
+$(function() {
+  
+  var game            = new Game
+  var options_view    = new OptionsView({model: game})
+  var characters_view = new CharactersView({model: game})
+  var word_view       = new WordView({model: game})
+  var hangman_view    = new HangmanView({model: game})
+  var answer_view     = new AnswerView({model: game})
+  var stage_view      = new StageView({model: game})
+  
+})
+[/sourcecode]
+
+<strong>What we've learned from this example (a reflection of my understanding of Backbone JS and the way I use it)</strong>
+
+<ul>
+  <li>Backbone JS helps us seperate the business logic from presentation logic. Things that talk to the server, validation etc go into the model. Things that happen in the view such as a user's click event should be in the view</li>
+  <li>In Backbone, views don't talk to each other directly, nor do they embed each other. Instead they communicate with the model through the subscriber/observer pattern (Note: this is my way of using Backbone, it is NOT a gospel truth). This provides us a mechanism to decouple things</li>
+  <li>Event binding is easy to use and grasp, plus event delegation is handled extremely well</li>
+  <li>Backbone JS is agnostic to the underlying DOM manipulation interface. You can use whatever you like, jQuery, Zepto, Prototype or MooTools</li>
+  <li>The choice of a templating language is totally up to you, you can plug in Handlebars, Mustache, jQuery templates or anything you see fit</li>
+  <li>Backbone promotes a good way to structure your application, good design patterns which are easy to follow and easy to get new developers to get up to speed with which is really important in terms of understanding legacy code and bringing on new people in your team</li>
+</ul>
+
+And that is it. I hope you find my post useful and have fun building applications in Backbone. If you have any comments or questions, I can be reached at trivektor at gmail.com.

@@ -7,6 +7,8 @@ The example uses Ruby 1.9.2, Sinatra, jQuery and Handlebars template
 
 The live example can be found at http://backbone-hangman.heroku.com
 
+I've also written a blog post which explains how everything works here http://trivektor.wordpress.com/2012/01/15/redo-the-classic-hangman-game-with-a-new-approach-backbone-js/
+
 HOW TO USE
 ---------------
 
