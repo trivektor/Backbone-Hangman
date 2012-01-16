@@ -24,32 +24,32 @@ Since this is a very simple game, we would use Sinatra for all backend processin
 
 [sourcecode language="ruby"]
 class Word
-
+  
   class << self
     def get_random
       content = File.read("countries.txt")
       words = content.split("\n")
       words[rand(words.size)].upcase
     end
-
+    
     def masquerade(word)
-      word.each_char.inject([]) { |disguise, char| disguise << (char == " " ? " " : " "); disguise }
+      word.each_char.inject([]) { |disguise, char| disguise << (char == " " ? " " : "&nbsp;"); disguise }
     end
-
+    
     def reveal(last_revealed_word, char_clicked, final_word)
       chars = final_word.each_char.to_a
-
+      
       last_revealed_word.each_index do |i|
-        last_revealed_word[i] = chars[i] if last_revealed_word[i] == " " and chars[i] == char_clicked
+        last_revealed_word[i] = chars[i] if last_revealed_word[i] == "&nbsp;" and chars[i] == char_clicked
       end
     end
-
+    
     def chars_left(revealed_word)
-      revealed_word.count { |c| c == " " }
+      revealed_word.count { |c| c == "&nbsp;" }
     end
-
+    
   end
-
+  
 end
 [/sourcecode]
 
