@@ -20,6 +20,7 @@ $(function() {
           var json = $.parseJSON(response);
           
           _this.set({lost: false});
+          _this.set({win: false});
           _this.trigger("gameStartedEvent", json);
         }
       })
