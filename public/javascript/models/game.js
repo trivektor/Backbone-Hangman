@@ -27,7 +27,7 @@ $(function() {
     check: function() {
       var _this = this;
       
-      if (_this.get("lost")) return;
+      if (_this.get("lost") || _this.get("win")) return;
       
       $.ajax({
         url: "/check",
