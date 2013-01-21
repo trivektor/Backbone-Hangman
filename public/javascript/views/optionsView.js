@@ -1,6 +1,6 @@
-$(function() {
-  
-  window.OptionsView = Backbone.View.extend({
+define(['backbone'], function(Backbone) {
+
+  return Backbone.View.extend({
     el: $("#options"),
     initialize: function() {
       this.model.bind("gameStartedEvent", this.removeGetAnswerButton, this);

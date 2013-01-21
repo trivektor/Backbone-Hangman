@@ -1,6 +1,6 @@
-$(function() {
-  
-  window.WordView = Backbone.View.extend({
+define(['backbone'], function(Backbone) {
+
+  return Backbone.View.extend({
     el: $("#word"),
     initialize: function() {
       this.compileTemplates();
@@ -12,10 +12,9 @@ $(function() {
       this.template = Handlebars.compile(template_source);
     },
     render: function(response) {
-      $("#hint").show();
+      $("#hint").css('display','block');
       var html = this.template({characters: response.word});
-      this.el.hide();
-      this.el.html(html).show();
+      this.el.html(html).css('display','block');
     },
     displayGuessResult: function(response) {
       var html = this.template({characters: response.word});

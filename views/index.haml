@@ -6,19 +6,6 @@
     %meta{:name => "author", :content => "Tri Vuong"}
     = stylesheet_link_tag     "http://fonts.googleapis.com/css?family=Montserrat",
                               "css/hangman.css"
-    = javascript_include_tag  "javascript/jquery.js",
-                              "javascript/underscore.js", 
-                              "javascript/backbone.js",
-                              "javascript/handlebars.js",
-                              "javascript/i18n.js",
-                              "javascript/models/game.js",
-                              "javascript/views/optionsView.js",
-                              "javascript/views/charactersView.js",
-                              "javascript/views/wordView.js",
-                              "javascript/views/hangmanView.js",
-                              "javascript/views/answerView.js",
-                              "javascript/views/stageView.js",
-                              "javascript/hangman.js"
   %body
     
     = haml :forkme
@@ -30,3 +17,5 @@
     = haml :footer
             
     = erb :templates
+
+    = javascript_include_tag  "javascript/require.js", :"data-main" => "javascript/config"

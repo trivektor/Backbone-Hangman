@@ -1,6 +1,6 @@
-$(function() {
-  
-  window.StageView = Backbone.View.extend({
+define(['backbone'], function(Backbone) {
+
+  return Backbone.View.extend({
     el: $("#stage"),
     initialize: function() {
       this.model.bind("guessCheckedEvent", this.showGameResult, this);
