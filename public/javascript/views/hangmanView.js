@@ -1,6 +1,6 @@
-$(function() {
-  
-  window.HangmanView = Backbone.View.extend({
+define(['backbone'], function(Backbone) {
+
+  return Backbone.View.extend({
     el: $("#ground"),
     initialize: function() {
       this.setupSelectors();

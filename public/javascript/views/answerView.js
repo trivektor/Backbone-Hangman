@@ -1,6 +1,6 @@
-$(function() {
-  
-  window.AnswerView = Backbone.View.extend({
+define(['backbone'], function(Backbone) {
+
+  return Backbone.View.extend({
     el: $("#answer"),
     initialize: function() {
       this.model.bind("gameStartedEvent", this.hide, this);

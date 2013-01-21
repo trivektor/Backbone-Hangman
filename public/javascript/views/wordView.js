@@ -1,6 +1,6 @@
-$(function() {
-  
-  window.WordView = Backbone.View.extend({
+define(['backbone'], function(Backbone) {
+
+  return Backbone.View.extend({
     el: $("#word"),
     initialize: function() {
       this.compileTemplates();

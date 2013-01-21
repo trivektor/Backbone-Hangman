@@ -1,6 +1,6 @@
-$(function() {
-  
-  window.Game = Backbone.Model.extend({
+define(['backbone'], function(Backbone) {
+
+  return Backbone.Model.extend({
     defaults: {
       threshold: 6
     },
@@ -20,7 +20,6 @@ $(function() {
           var json = $.parseJSON(response);
           
           _this.set({lost: false});
-          _this.set({win: false});
           _this.trigger("gameStartedEvent", json);
         }
       })
