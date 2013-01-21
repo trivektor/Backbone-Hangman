@@ -16,7 +16,7 @@ define(['backbone'], function(Backbone) {
     },
     render: function() {
       var chars = this.character_template({characters: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'G', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'X', 'Y', 'Z', 'W', '&']})
-      this.el.html(chars).show();
+      this.el.html(chars).css('display','block');
     },
     charClicked: function(event) {
       if (this.model.get("lost")) return;

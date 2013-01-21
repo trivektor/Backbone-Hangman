@@ -8,7 +8,7 @@ define(['backbone'], function(Backbone) {
     },
     render: function(response) {
       if (response.success == 1) {
-        this.el.html("Answer: " + response.answer).show();
+        this.el.html("Answer: " + response.answer).css('display','block');
       } else {
         alert(response.message);
       }
